@@ -36,7 +36,7 @@
         <form id="formDataDiri" autocomplete="off">
             <div class="form-element" id="fieldName">
                 <label for="inputNama">Nama Panggilan:</label><br />
-                <input id="inputNama" type="text" name="nama" placeholder="Nama panggilan Anda" maxlength="15" />
+                <input id="inputNama" type="text" name="nama" placeholder="Nama panggilan Anda" maxlength="8" />
                 <br />
                 <label id="notifikasiSisaKarakter">
                     Sisa karakter: <span id="sisaKarakter"></span>
@@ -72,7 +72,7 @@
 
     <script>
 
-    document.addEventListener('DOMContentLoaded', () => {
+     document.addEventListener('DOMContentLoaded', () => {
         const inputMaxLengthOnLoad = document.getElementById('inputNama').maxLength;
         document.getElementById('sisaKarakter').innerText = inputMaxLengthOnLoad;
 
@@ -80,25 +80,63 @@
             const jumlahKarakterDiketik = document.getElementById('inputNama').value.length;
             const jumlahKarakterMaksimal = document.getElementById('inputNama').maxLength;
 
-            console.log('jumlahKarakterDiketik', jumlahKarakterDiketik);
-            console.log('jumlahKarakterMaksimal', jumlahKarakterMaksimal);
-            
+            console.log('jumlahKarakterDiketik: ', jumlahKarakterDiketik);
+            console.log('jumlahKarakterMaksimal: ', jumlahKarakterMaksimal);
+
             const sisaKarakterUpdate = jumlahKarakterMaksimal - jumlahKarakterDiketik;
             document.getElementById('sisaKarakter').innerText = sisaKarakterUpdate.toString();
-        })
 
-        if (sisaKarakterUpdate === 0) {
-            document.getElementById('sisaKarakter').innerText = 'Batas Maksimal Tercapai!';
-        } else if (sisaKarakterUpdate <= 5) {
-            document.getElementById('notifikasiSisaKarakter').style.color = 'red';
-        } else {
-            document.getElementById('notifikasiSisaKarakter').style.color = 'black';
-        }
+            if (sisaKarakterUpdate === 0) {
+                document.getElementById('sisaKarakter').innerText = 'Batas maksimal tercapai!';
+            } else if (sisaKarakterUpdate <= 3) {
+                document.getElementById('notifikasiSisaKarakter').style.color = 'red';
+            } else {
+                document.getElementById('notifikasiSisaKarakter').style.color = 'black';
+            }
+        });
 
         document.getElementById('inputNama').addEventListener('focus', () => {
             console.log('inputNama: focus');
             document.getElementById('notifikasiSisaKarakter').style.visibility = 'visible';
         });
+
+        document.getElementById('inputNama').addEventListener('blur', () => {
+            console.log('inputNama : blur');
+            document.getElementById('notifikasiSisaKarakter').style.visibility = 'hidden';
+        });
+
+        document.getElementById('inputCaptcha').addEventListener('change', () => {
+            console.log('inputCaptcha : change')
+
+            const inputCaptcha = document.getElementById('inputCaptcha').value;
+            const submitButtonStatus = document.getElementById('submitButton');
+
+            if (inputCaptcha === 'PRNU') {
+                submitButtonStatus.removeAttribute('disabled');
+            } else {
+                submitButtonStatus.setAttribute('disabled', '');
+            }
+        });
+
+        document.getElementById('formDataDiri').addEventListener('submit', (event) => {
+            const inputCaptcha = document.getElementById('inputCaptcha').value;
+
+            if (inputCaptcha === 'PRNU') {
+                alert('Benar!');
+            } else {
+                alert('Salah!');
+                document.getElementById('submitButton').setAttribute('disabled', '');
+            }
+            event.preventDefault();
+        });
+
+        document.getElementById('inputCopy').addEventListener('copy', () => {
+            alert('Anda telah mencopy....')
+        })
+
+        document.getElementById('inputPaste').addEventListener('paste', () => {
+            alert('Anda telah mempaste...')
+        })
     });
     
         // const submitFunction = document.getElementById('formDataDiri');
