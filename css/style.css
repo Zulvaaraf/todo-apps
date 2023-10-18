@@ -34,7 +34,7 @@ header {
     height: fit-content;
 }
 
-/* .item {
+.item {
     border-radius: 16px;
     margin-top: 16px;
     padding: 12px 24px 12px 24px;
@@ -51,8 +51,6 @@ header {
 .item>.inner p {
     margin-top: 5px;
 }
-
-*/
 
 .form {
     display: flex;
