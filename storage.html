@@ -279,6 +279,14 @@
             }
         });
 
+        destroyDataButton.addEventListener('click', () => {
+            sessionStorage.removeItem(sessionAnswerKey);
+            sessionStorage.removeItem(sessionUserAttemptsKey);
+            sessionStorage.removeItem(sessionUserIsPlayingKey);
+            localStorage.removeItem(localTotalVictoryKey);
+            localStorage.removeItem(localMaximumAttemptsKey);
+            alert('Refresh halaman ini kembali');
+        });
 
     </script>
 
