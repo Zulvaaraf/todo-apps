@@ -1,5 +1,7 @@
 const todos = [];
 const RENDER_EVENT = 'render-todo';
+const SAVED_EVENT = 'saved-todo';
+const STORAGE_KEY = 'TODO_APPS';
 
 function generateTodoObject(id, task, timestamp, isCompleted) {
   return {
@@ -32,13 +34,31 @@ function findTodoIndex(todoId) {
   return -1;
 }
 
-function addTodo() {
-  const textTodo = document.getElementById('title').value;
-  const timesTamp = document.getElementById('date').value;
+function saveData() {
+  if (isStorageExist()) {
+    const parsed = JSON.stringify(todos);
+    localStorage.setItem(STORAGE_KEY, parsed);
+    document.dispatchEvent(new Event(SAVED_EVENT));
+  }
+}
 
-  const generateID = generateId();
-  const todoObject = generateTodoObject(generateID, textTodo, timesTamp, false);
-  todos.push(todoObject);
+function isStorageExist() {
+  if (typeof Storage === undefined) {
+    alert('Browser tidak mendukung Web Storage');
+    return false;
+  }
+  return true;
+}
+
+function loadDataFromStorage() {
+  const serializedData = localStorage.getItem(STORAGE_KEY);
+  let data = JSON.parse(serializedData);
+
+  if (data !== null) {
+    for (const todo of data) {
+      todos.push(todo);
+    }
+  }
 
   document.dispatchEvent(new Event(RENDER_EVENT));
 }
@@ -88,6 +108,18 @@ function makeTodo(todoObject) {
   return container;
 }
 
+function addTodo() {
+  const textTodo = document.getElementById('title').value;
+  const timesTamp = document.getElementById('date').value;
+
+  const generateID = generateId();
+  const todoObject = generateTodoObject(generateID, textTodo, timesTamp, false);
+  todos.push(todoObject);
+
+  document.dispatchEvent(new Event(RENDER_EVENT));
+  saveData();
+}
+
 function addTaskToCompleted(todoId) {
   const todoTarget = findTodo(todoId);
 
@@ -95,6 +127,7 @@ function addTaskToCompleted(todoId) {
 
   todoTarget.isCompleted = true;
   document.dispatchEvent(new Event(RENDER_EVENT));
+  saveData();
 }
 
 function removeTaskFromCompleted(todoId) {
@@ -103,8 +136,8 @@ function removeTaskFromCompleted(todoId) {
   if (todoTarget === -1) return;
 
   todos.splice(todoTarget, 1);
-  q;
   document.dispatchEvent(new Event(RENDER_EVENT));
+  saveData();
 }
 
 function undoTaskFromCompleted(todoId) {
@@ -114,6 +147,7 @@ function undoTaskFromCompleted(todoId) {
 
   todoTarget.isCompleted = false;
   document.dispatchEvent(new Event(RENDER_EVENT));
+  saveData();
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -122,6 +156,10 @@ document.addEventListener('DOMContentLoaded', () => {
     event.preventDefault();
     addTodo();
   });
+
+  if (isStorageExist()) {
+    loadDataFromStorage();
+  }
 });
 
 document.addEventListener(RENDER_EVENT, () => {
@@ -139,4 +177,8 @@ document.addEventListener(RENDER_EVENT, () => {
       completedTODOList.append(todoElement);
     }
   }
+});
+
+document.addEventListener(SAVED_EVENT, () => {
+  console.log(localStorage.getItem(STORAGE_KEY));
 });
